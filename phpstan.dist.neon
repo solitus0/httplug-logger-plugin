@@ -1,0 +1,25 @@
+parameters:
+    level: 5
+    paths:
+        - src/
+    excludePaths:
+        - %currentWorkingDirectory%/src/DependencyInjection/Configuration.php
+    disallowedFunctionCalls:
+        -
+            function: dump
+            message: use some logger instead
+        -
+            function: dd
+            message: use some logger instead
+        -
+            function: echo
+            message: use some logger instead
+        -
+            function: print
+            message: use some logger instead
+    scanFiles:
+        - vendor/symfony/dependency-injection/Loader/Configurator/ContainerConfigurator.php
+    strictRules:
+        allRules: false
+        uselessCast: true
+        noVariableVariables: true

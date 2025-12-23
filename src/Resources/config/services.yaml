@@ -1,0 +1,82 @@
+services:
+    httplug_logger.parser.psr_request:
+        class: Solitus0\HttplugLoggerBundle\Parser\PsrHttpRequestParser
+        autowire: true
+        autoconfigure: true
+
+    httplug_logger.parser.psr_request_payload:
+        class: Solitus0\HttplugLoggerBundle\Parser\PsrHttpRequestPayloadParser
+        autowire: true
+        autoconfigure: true
+
+    httplug_logger.parser.psr_request_graphql_payload:
+        class: Solitus0\HttplugLoggerBundle\Parser\PsrHttpRequestGraphqlPayloadParser
+        autowire: true
+        autoconfigure: true
+
+    httplug_logger.parser.psr_response:
+        class: Solitus0\HttplugLoggerBundle\Parser\PsrHttpResponseParser
+        autowire: true
+        autoconfigure: true
+
+    httplug_logger.parser.psr_response_payload:
+        class: Solitus0\HttplugLoggerBundle\Parser\PsrHttpResponsePayloadParser
+        autowire: true
+        autoconfigure: true
+        arguments:
+            $truncateResponsePayload: '%httplug_logger.parser.response_payload_truncate%'
+            $maxKilobyteSize: '%httplug_logger.parser.response_payload_max_kilobyte_size%'
+
+    httplug_logger.parser.psr_response_error_payload:
+        class: Solitus0\HttplugLoggerBundle\Parser\PsrHttpResponseErrorParser
+        autowire: true
+        autoconfigure: true
+
+    httplug_logger.parser.exception:
+        class: Solitus0\HttplugLoggerBundle\Parser\ExceptionParser
+        autowire: true
+        autoconfigure: true
+
+    httplug_logger.transfer_stats_collection:
+        class: Solitus0\HttplugLoggerBundle\Parser\TransferStatsCollection
+        autowire: true
+        autoconfigure: true
+
+    httplug_logger.parser.transfer_stats:
+        class: Solitus0\HttplugLoggerBundle\Parser\TransferStatsParser
+        autowire: true
+        autoconfigure: true
+        arguments:
+            $collection: '@httplug_logger.transfer_stats_collection'
+
+    httplug_logger.parser_collection.default:
+        class: Solitus0\HttplugLoggerBundle\Parser\PsrHttpMessageParserCollection
+        autowire: true
+        autoconfigure: true
+        arguments:
+            $parsers:
+                - '@httplug_logger.parser.psr_request'
+                - '@httplug_logger.parser.psr_request_payload'
+                - '@httplug_logger.parser.psr_response'
+                - '@httplug_logger.parser.psr_response_payload'
+                - '@httplug_logger.parser.exception'
+                - '@httplug_logger.parser.transfer_stats'
+
+    httplug_logger.level_picker.default:
+        class: Solitus0\HttplugLoggerBundle\LevelPicker\LogLevelPicker
+
+    httplug_logger.guzzle7_factory.transfer_stats_aware:
+        class: Solitus0\HttplugLoggerBundle\TransferStatsAwareGuzzle7Factory
+        autowire: true
+        autoconfigure: true
+        arguments:
+            $transferStatsCollection: '@httplug_logger.transfer_stats_collection'
+
+    monolog.formatter.gcp:
+        class: Solitus0\HttplugLoggerBundle\Monolog\Formatter\GoogleCloudJsonFormatter
+        arguments:
+            $ignoreEmptyContextAndExtra: true
+
+    Solitus0\HttplugLoggerBundle\Monolog\Processor\RequestDecoratorProcessor:
+        autowire: true
+        autoconfigure: true
